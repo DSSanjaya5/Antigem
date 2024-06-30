@@ -1,5 +1,6 @@
 from fastapi import FastAPI, File, UploadFile, HTTPException
 from fastapi.responses import JSONResponse, StreamingResponse, FileResponse
+from fastapi.middleware.cors import CORSMiddleware
 from PIL import Image
 import io
 import os
@@ -9,6 +10,14 @@ from uuid import uuid4
 from middlewares.cache_middleware import CacheMiddleware
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)   
 
 ENDPOINT = "endpoint"
 IMAGE_DIR = "processed_images"
