@@ -15,7 +15,6 @@ class CacheMiddleware(BaseHTTPMiddleware):
         # Create a cache key based on the request URL
         cache_key = hashlib.md5(str(request.url).encode()).hexdigest()
 
-        print("Hello")
         # Check for cache
         cached_response = self.cache.get(cache_key)
         if cached_response:
