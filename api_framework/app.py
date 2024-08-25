@@ -1,11 +1,12 @@
-from fastapi import FastAPI, File, UploadFile, HTTPException
-from fastapi.responses import JSONResponse, StreamingResponse, FileResponse
-from fastapi.middleware.cors import CORSMiddleware
-from PIL import Image
 import io
 import os
 import base64
+import uvicorn
+from PIL import Image
 from uuid import uuid4
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi import FastAPI, File, UploadFile, HTTPException
+from fastapi.responses import JSONResponse, StreamingResponse, FileResponse
 
 from middlewares.cache_middleware import CacheMiddleware
 
@@ -17,17 +18,24 @@ app.add_middleware(
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
-)   
+)
+app.add_middleware(CacheMiddleware, ttl=60)
 
 ENDPOINT = "endpoint"
 IMAGE_DIR = "processed_images"
 os.makedirs(IMAGE_DIR, exist_ok=True)
 
+
+@app.get("/hello_world")
+async def hello_world():
+    return {"Message": "Hello World!"}
+
+
 @app.post(f"/{ENDPOINT}/{{filename}}")
 async def process_image(filename: str, file: UploadFile = File(...)):
     contents = await file.read()
     image = Image.open(io.BytesIO(contents))
-    
+
     # Call the Image processing function
     image = image.convert("L")
 
@@ -37,10 +45,11 @@ async def process_image(filename: str, file: UploadFile = File(...)):
 
     # Encode the processed image to base64
     with open(image_path, "rb") as image_file:
-        encoded_image = base64.b64encode(image_file.read()).decode('utf-8')
+        encoded_image = base64.b64encode(image_file.read()).decode("utf-8")
 
     # Return the base64 encoded image in a JSON response
     return {"filename": filename, "image_base64": encoded_image}
+
 
 @app.get("/download-image/{filename}")
 async def download_image(filename: str):
@@ -50,6 +59,6 @@ async def download_image(filename: str):
 
     return FileResponse(image_path, media_type="image/jpeg", filename=f"{filename}.jpg")
 
-if __name__=="__main__":
-    import uvicorn
+
+if __name__ == "__main__":
     uvicorn.run(app, host="127.0.0.1", port=8000)
