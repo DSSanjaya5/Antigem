@@ -32,14 +32,14 @@ class SplitPDF:
         if merge:
             for r in range_of_pages:
                 r = sorted(r)
-                r[0] = max(1,r[0])
+                r[0] = max(1, r[0])
                 r[1] = min(r[1], self.pdf_len)
                 self.output_pdf.pages.extend(self.pdf.pages[r[0] - 1 : r[1]])
             self.output_pdf.save(self.output_filename)
         else:
             for r in range_of_pages:
                 r = sorted(r)
-                r[0] = max(1,r[0])
+                r[0] = max(1, r[0])
                 r[1] = min(r[1], self.pdf_len)
                 new_pdf = Pdf.new()
                 new_pdf.pages.extend(self.pdf.pages[r[0] - 1 : r[1]])
@@ -70,6 +70,7 @@ class SplitPDF:
                 self.add_file_to_zip(self.zip_file, file)
                 if os.path.isfile(file):
                     os.remove(file)
+
 
 # def sample_pdf():
 #     """Create a simple PDF with 5 pages for testing."""
