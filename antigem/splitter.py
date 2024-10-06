@@ -48,6 +48,7 @@ class SplitPDF:
                 self.add_file_to_zip(self.zip_file, file)
                 if os.path.isfile(file):
                     os.remove(file)
+        self.pdf.close()
 
     def split_extract(self, extract_pages: List = None, merge=False):
         if not extract_pages:
@@ -70,6 +71,7 @@ class SplitPDF:
                 self.add_file_to_zip(self.zip_file, file)
                 if os.path.isfile(file):
                     os.remove(file)
+        self.pdf.close()
 
 
 # def sample_pdf():
