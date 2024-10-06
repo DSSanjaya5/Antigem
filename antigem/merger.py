@@ -18,5 +18,6 @@ class MergePDF:
         for pdf in pdfs:
             pdf_file = Pdf.open(pdf)
             self.new_pdf.pages.extend(pdf_file.pages)
+            pdf_file.close()
         if save:
             self._save()
